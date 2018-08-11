@@ -1,14 +1,10 @@
 from flask_restful import Resource
+from emergency_manager import EmergencyManager
 
-class Emergency(Resource):
-    def get(self, button_name):
-        pass
+class ButtonPressed(Resource):
+    def put(self, device_id, button_id):
+        return {'status' : EmergencyManager.button_pressed(device_id, button_id)}
 
-    def post(self, button_name):
-        pass
-
-    def put(self, button_name):
-        pass
-
-    def delete(self, button_name):
-        pass
+class DeviceStatus(Resource):
+    def get(self, device_id):
+        return {'status' : EmergencyManager.get_status(device_id)}

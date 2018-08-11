@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from peewee import SqliteDatabase, Model, CharField, IntegerField, DateTimeField, ForeignKeyField, BooleanField
 
-DATABASE = 'coffee_emergency.db'
+DATABASE = '../coffee_emergency.db'
 db = SqliteDatabase(DATABASE)
 
 class Database:
@@ -66,7 +66,7 @@ class Device(BaseModel):
             button = Button.create(id_in_device=button_id, device=self)
         return button
 
-class Button(Model):
+class Button(BaseModel):
     id_in_device = IntegerField()
     is_reset_button = BooleanField(default=False)
     emergency_state = IntegerField(default=0)
