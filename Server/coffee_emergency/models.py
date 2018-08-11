@@ -4,6 +4,12 @@ from peewee import SqliteDatabase, Model, CharField, IntegerField, DateTimeField
 DATABASE = 'coffee_emergency.db'
 db = SqliteDatabase(DATABASE)
 
+class Database:
+    @staticmethod
+    def initialize():
+        db.connect()
+        db.create_tables([Device, Button])
+
 class BaseModel(Model):
     class Meta:
         database = SqliteDatabase(DATABASE)
@@ -13,18 +19,6 @@ class Device(BaseModel):
     external_name = CharField(default='name me!')
     responsible_hipchat_user = CharField(default='insert hipchat username!')
     
-    @property
-    def button_count(self):
-        return Button.select().where(Button.device == self).count()
-
-    @property
-    def status(self):
-        highest_emergency_state = 0
-        for button in Button.select().where(Button.device == self):
-            if button.emergency_state > highest_emergency_state:
-                highest_emergency_state = button.emergency_state
-        return highest_emergency_state
-
     @staticmethod
     def button_pressed_on_device(device_id, button_id):
         device = Device.get_or_create_device_by_id(device_id)
@@ -40,6 +34,18 @@ class Device(BaseModel):
         if device == None:
             device = Device.create(internal_id=device_id)
         return device
+
+    @property
+    def button_count(self):
+        return Button.select().where(Button.device == self).count()
+
+    @property
+    def status(self):
+        highest_emergency_state = 0
+        for button in Button.select().where(Button.device == self):
+            if button.emergency_state > highest_emergency_state:
+                highest_emergency_state = button.emergency_state
+        return highest_emergency_state
 
     def button_pressed(self, button_id):
         pressed_button = self.get_or_create_button_by_id(button_id)
@@ -60,16 +66,12 @@ class Device(BaseModel):
             button = Button.create(id_in_device=button_id, device=self)
         return button
 
-
 class Button(Model):
     id_in_device = IntegerField()
     is_reset_button = BooleanField(default=False)
     emergency_state = IntegerField(default=0)
     last_pressed = DateTimeField(default=datetime.now())
     device = ForeignKeyField(Device, backref='buttons')
-
-    class Meta:
-        database = SqliteDatabase(DATABASE)
 
     def reset(self):
         self.emergency_state = 0
