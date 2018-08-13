@@ -73,6 +73,17 @@ class Button(BaseModel):
     last_pressed = DateTimeField(default=datetime.now())
     device = ForeignKeyField(Device, backref='buttons')
 
+    @staticmethod
+    def get_button_by_id(device_id, button_id):
+        try:
+            button = Button.select().join(Device).where(
+                (Device.internal_id == device_id) & 
+                (Button.id_in_device == button_id)
+            ).get()
+        except Button.DoesNotExist:
+            button = None
+
+        return button
     def reset(self):
         self.emergency_state = 0
         self.last_pressed = datetime.now()
@@ -92,15 +103,3 @@ class Button(BaseModel):
             return 0
         self._pressed_internal(datetime.now())
         return self.emergency_state
-    
-    @staticmethod
-    def get_button_by_id(device_id, button_id):
-        try:
-            button = Button.select().join(Device).where(
-                (Device.internal_id == device_id) & 
-                (Button.id_in_device == button_id)
-            ).get()
-        except Button.DoesNotExist:
-            button = None
-
-        return button
