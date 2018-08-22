@@ -2,21 +2,61 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include "ConnectionDetails.h"
+#include <ArduinoJson.h>
 
-bool Restcall::sendButtonPressed(const char* device_id, int button_id) {
+int Restcall::sendButtonPressed(int button_id) {
+    int returnvalue = -1;
+    if (WiFi.status() != WL_CONNECTED) {
+        return returnvalue;
+    }
+
+    HTTPClient http;
+    String rest_call = String(HOST_ADDRESS) + "/emergency/rest/device/" + String(DEVICE_ID) + "/button/" + String(button_id) + "/pressed";
+
+    http.begin(rest_call);
+
+    Serial.println(rest_call);
+    
+    int httpCode =http.PUT("");
+
+    Serial.print("Code: ");
+    Serial.println(httpCode);
+
+    if(httpCode == HTTP_CODE_OK) {
+        Serial.print("HTTP response code ");
+        Serial.println(httpCode);
+        String response = http.getString();
+        Serial.print("Response: ");
+        Serial.println(response);
+
+        StaticJsonBuffer<200> jsonBuffer;
+        JsonObject& json_response = jsonBuffer.parseObject(response);
+        int status = json_response["status"];
+
+        Serial.print("status: ");
+        Serial.println(status);
+        returnvalue = status;
+    }
+
+    http.end();
+
+    return returnvalue;
+}
+
+bool Restcall::initializeButton(Button* button) {
     if (WiFi.status() != WL_CONNECTED) {
         return false;
     }
 
     HTTPClient http;
-    char buf[256];
-    snprintf(buf, sizeof buf, "http://192.168.0.136:5000/emergency/rest/device/%s/button/%d/pressed", device_id, button_id);
-    //String zusammenbauen: http://emotion.cas.de/emergenc/rest/device/<device_id>/button/<button_id>/pressed
 
-    http.begin(buf);
+    String rest_call = String(HOST_ADDRESS) + "/emergency/rest/device/" + String(DEVICE_ID) + "/button/" + String(button->getButtonId()) + "/type";
 
-    Serial.println(buf);
+    http.begin(rest_call);
+
+    Serial.println(rest_call);
     
+    String type;
     int httpCode =http.PUT("");
 
     Serial.print("Code: ");

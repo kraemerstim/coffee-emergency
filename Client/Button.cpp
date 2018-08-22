@@ -8,10 +8,11 @@ Button::Button(int button_id, int pin, bool reset_button) {
   this->button_id = button_id;
   this->pin = pin;
   this->is_reset_button = reset_button;
-
-  registerInterrupt();
 }
 
+int Button::getButtonId() {
+  return this->button_id;
+}
 void Button::registerInterrupt() {
     switch(button_id) {
         case 0:
@@ -45,6 +46,9 @@ int Button::pullPressedId() {
     return pressedId;
 }
 
+int Button::getPressedId() {
+    return pressedId;
+}
 
 bool Button::buttonIsPressed() {
     unsigned long currentMillis = millis();

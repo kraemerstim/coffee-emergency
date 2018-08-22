@@ -84,6 +84,15 @@ class Button(BaseModel):
             button = None
 
         return button
+    
+    @staticmethod
+    def get_or_create_button_by_id(device_id, button_id):
+        button = Button.get_button_by_id(device_id, button_id)
+        if not button:
+            my_device = Device.get_or_create_device_by_id(device_id)
+            button = Button.create(id_in_device=button_id, device=my_device)
+        return button
+
     def reset(self):
         self.emergency_state = 0
         self.last_pressed = datetime.now()

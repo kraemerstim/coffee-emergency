@@ -17,7 +17,10 @@ class Button {
     Button(int button_id, int pin, bool reset_button);
     void registerInterrupt();
 
+    int getButtonId();
+
     static int pullPressedId();
+    static int getPressedId();
 
     static void Callback0();
     static void Callback1();

@@ -1,6 +1,10 @@
-from models import Device, Button
+from models import Device, Button, Database
 
 class EmergencyManager:
+    @staticmethod
+    def initialize():
+        Database.initialize()
+
     @staticmethod
     def get_status(device_id):
         return Device.get_or_create_device_by_id(device_id).status
@@ -12,7 +16,7 @@ class EmergencyManager:
 
     @staticmethod
     def set_button_type(device_id, button_id, button_type):
-        button = Button.get_button_by_id(device_id, button_id)
+        button = Button.get_or_create_button_by_id(device_id, button_id)
         if button_type == 'reset':
             button.is_reset_button = True
             button.reset()
