@@ -13,26 +13,31 @@ Button::Button(int button_id, int pin, bool reset_button) {
 int Button::getButtonId() {
   return this->button_id;
 }
+
+int Button::getPin() {
+    return this->pin;
+}
+
 void Button::registerInterrupt() {
     switch(button_id) {
         case 0:
-            attachInterrupt(digitalPinToInterrupt(pin), Callback0, RISING);
+            attachInterrupt(digitalPinToInterrupt(pin), Callback0, FALLING);
             Serial.println("Callback attatched: 0");
             break;
         case 1:
-            attachInterrupt(digitalPinToInterrupt(pin), Callback1, RISING);
+            attachInterrupt(digitalPinToInterrupt(pin), Callback1, FALLING);
             Serial.println("Callback attatched: 1");
             break;
         case 2:
-            attachInterrupt(digitalPinToInterrupt(pin), Callback2, RISING);
+            attachInterrupt(digitalPinToInterrupt(pin), Callback2, FALLING);
             Serial.println("Callback attatched: 2");
             break;
         case 3:
-            attachInterrupt(digitalPinToInterrupt(pin), Callback3, RISING);
+            attachInterrupt(digitalPinToInterrupt(pin), Callback3, FALLING);
             Serial.println("Callback attatched: 3");
             break;
         case 4:
-            attachInterrupt(digitalPinToInterrupt(pin), Callback4, RISING);
+            attachInterrupt(digitalPinToInterrupt(pin), Callback4, FALLING);
             Serial.println("Callback attatched: 4");
             break;
     }

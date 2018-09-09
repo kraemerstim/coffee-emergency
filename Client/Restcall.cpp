@@ -50,13 +50,11 @@ bool Restcall::initializeButton(Button* button) {
 
     HTTPClient http;
 
-    String rest_call = String(HOST_ADDRESS) + "/emergency/rest/device/" + String(DEVICE_ID) + "/button/" + String(button->getButtonId()) + "/type";
 
-    http.begin(rest_call);
 
     Serial.println(rest_call);
+    http.begin(rest_call);
     
-    String type;
     int httpCode =http.PUT("");
 
     Serial.print("Code: ");
@@ -74,4 +72,3 @@ bool Restcall::initializeButton(Button* button) {
 
     return true;
 }
-

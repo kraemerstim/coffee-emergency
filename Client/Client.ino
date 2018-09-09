@@ -6,8 +6,16 @@
 #include "Restcall.h"
 #include "Button.h"
 
-ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 int leds[3] = {D1, D2, D3};
+
+Button buttons[4] = {
+    Button(0, D5, false),
+    Button(1, D6, false),
+    Button(2, D7, false),
+    Button(3, D8, true)
+  };
+
+ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
 void wifiConnect() {
   Serial.print("Connecting to the strongest AP"); 
@@ -29,42 +37,50 @@ void setup() {
   delay(30);
   Serial.println('\n');
 
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
+  pinMode(leds[0], OUTPUT);
+  pinMode(leds[1], OUTPUT);
+  pinMode(leds[2], OUTPUT);
 
-  digitalWrite(D1, LOW);
-  digitalWrite(D2, LOW);
-  digitalWrite(D3, LOW);
+  digitalWrite(leds[0], LOW);
+  digitalWrite(leds[1], LOW);
+  digitalWrite(leds[2], LOW);
   
+  // Einrichtung des WLAN-Moduls
   WiFi.persistent(false);
   WiFi.mode(WIFI_STA);
   WiFi.hostname("NodeMCU tim");
 
   wifiMulti.addAP(AP1_SSID, AP1_PASSWORD);
   wifiMulti.addAP(AP2_SSID, AP2_PASSWORD);
-  //wifiMulti.addAP(AP3_SSID, AP3_PASSWORD);
+  wifiMulti.addAP(AP3_SSID, AP3_PASSWORD);
+  wifiMulti.addAP(AP4_SSID, AP4_PASSWORD);
   
   wifiConnect();
-  
-  Button buttons[4] = {
-    Button(0, D5, false),
-    Button(1, D6, false),
-    Button(2, D7, false),
-    Button(3, D8, true)
-  };
 
   for (int i = 0; i < 4; i++) {
+    pinMode(buttons[i].getPin(), INPUT_PULLUP);
+    Restcall::initializeButton(&buttons[i]);
     buttons[i].registerInterrupt();
-    //Restcall::initializeButton(&buttons[i]);
   }
+
+  blink(0, 0,0, true);
+  delay(200);  
+  blink(1, 0,0, false);  
+  delay(200);  
+  blink(2, 0,0, false);    
+  delay(200);  
+  disable_all_leds();
+}
+
+void disable_all_leds() {
+  for (int i = 0; i < 3; i++) {
+      digitalWrite(leds[i], LOW);
+    }
 }
 
 void blink(int led_id, int interval, int times, boolean disable_rest) {
   if (disable_rest) {
-    for (int i = 0; i < 3; i++) {
-      digitalWrite(leds[i], LOW);
-    }
+    disable_all_leds();
   }
   if (interval == 0) {
     digitalWrite(leds[led_id], HIGH);
@@ -86,15 +102,15 @@ void loop() {
     while (!Restcall::sendButtonPressed(pressedId)) {
       wifiConnect();
     }
-      digitalWrite(D1, HIGH);
+      digitalWrite(leds[0], HIGH);
       delay(1000);
-      digitalWrite(D1, LOW);
-      digitalWrite(D2, HIGH);
+      digitalWrite(leds[0], LOW);
+      digitalWrite(leds[1], HIGH);
       delay(1000);
-      digitalWrite(D2, LOW);
-      digitalWrite(D3, HIGH);
+      digitalWrite(leds[1], LOW);
+      digitalWrite(leds[2], HIGH);
       delay(1000);
-      digitalWrite(D3, LOW);
+      digitalWrite(leds[2], LOW);
       Button::pullPressedId();
   }
   delay(100);

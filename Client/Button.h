@@ -18,6 +18,7 @@ class Button {
     void registerInterrupt();
 
     int getButtonId();
+    int getPin();
 
     static int pullPressedId();
     static int getPressedId();
