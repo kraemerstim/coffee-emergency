@@ -9,10 +9,10 @@
 int leds[3] = {D1, D2, D3};
 
 Button buttons[4] = {
-    Button(0, D5, false),
+    Button(0, D5, true),
     Button(1, D6, false),
     Button(2, D7, false),
-    Button(3, D8, true)
+    Button(3, D4, false)
   };
 
 ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
@@ -54,6 +54,7 @@ void setup() {
   wifiMulti.addAP(AP2_SSID, AP2_PASSWORD);
   wifiMulti.addAP(AP3_SSID, AP3_PASSWORD);
   wifiMulti.addAP(AP4_SSID, AP4_PASSWORD);
+  wifiMulti.addAP(AP5_SSID, AP5_PASSWORD);
   
   wifiConnect();
 
@@ -99,9 +100,14 @@ void blink(int led_id, int interval, int times, boolean disable_rest) {
 void loop() {
   int pressedId = Button::getPressedId();
   if (pressedId > -1) {
-    while (!Restcall::sendButtonPressed(pressedId)) {
+    int status = Restcall::sendButtonPressed(pressedId);
+    while (status == -1) {
       wifiConnect();
+      status = Restcall::sendButtonPressed(pressedId);
     }
+    if (status > 2) status = 2;
+    blink(status, 100, 10, true);
+    /*
       digitalWrite(leds[0], HIGH);
       delay(1000);
       digitalWrite(leds[0], LOW);
@@ -111,6 +117,7 @@ void loop() {
       digitalWrite(leds[2], HIGH);
       delay(1000);
       digitalWrite(leds[2], LOW);
+      */
       Button::pullPressedId();
   }
   delay(100);

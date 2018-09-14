@@ -48,9 +48,13 @@ bool Restcall::initializeButton(Button* button) {
         return false;
     }
 
+    String type_string = "normal";
+    if (button->getIsResetButton()) {
+        type_string = "reset";
+    }
     HTTPClient http;
 
-
+    String rest_call = String(HOST_ADDRESS) + "/emergency/rest/device/" + String(DEVICE_ID) + "/button/" + String(button->getButtonId()) + "/type?type=" + type_string;
 
     Serial.println(rest_call);
     http.begin(rest_call);

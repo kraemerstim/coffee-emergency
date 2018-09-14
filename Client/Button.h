@@ -20,6 +20,8 @@ class Button {
     int getButtonId();
     int getPin();
 
+    boolean getIsResetButton();
+
     static int pullPressedId();
     static int getPressedId();
 

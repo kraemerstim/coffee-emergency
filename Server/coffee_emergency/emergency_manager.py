@@ -24,6 +24,9 @@ class EmergencyManager:
         else:
             button.is_reset_button = False
             button.save()
+        
+        button = Button.get_or_create_button_by_id(device_id, button_id)
+        print(button.is_reset_button)
 
     @staticmethod
     def get_button_type(device_id, button_id):

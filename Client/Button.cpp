@@ -18,6 +18,10 @@ int Button::getPin() {
     return this->pin;
 }
 
+boolean Button::getIsResetButton() {
+    return this->is_reset_button;
+}
+
 void Button::registerInterrupt() {
     switch(button_id) {
         case 0:
