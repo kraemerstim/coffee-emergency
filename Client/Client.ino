@@ -10,9 +10,7 @@ int leds[3] = {D1, D2, D3};
 
 Button buttons[4] = {
     Button(0, D5, true),
-    Button(1, D6, false),
-    Button(2, D7, false),
-    Button(3, D4, false)
+    Button(1, D6, false)
   };
 
 ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
@@ -58,18 +56,18 @@ void setup() {
   
   wifiConnect();
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 2; i++) {
     pinMode(buttons[i].getPin(), INPUT_PULLUP);
     Restcall::initializeButton(&buttons[i]);
     buttons[i].registerInterrupt();
   }
 
   blink(0, 0,0, true);
-  delay(200);  
+  delay(500);  
   blink(1, 0,0, false);  
-  delay(200);  
+  delay(500);  
   blink(2, 0,0, false);    
-  delay(200);  
+  delay(500);  
   disable_all_leds();
 }
 
@@ -97,28 +95,32 @@ void blink(int led_id, int interval, int times, boolean disable_rest) {
   }
 }
 
+void raindbow() {
+  blink(leds[0], 0, 0, true);
+  delay(1000);
+  blink(leds[1], 0, 0, true);
+  delay(1000);
+  blink(leds[2], 0, 0, true);
+  delay(1000);
+  disable_all_leds();
+}
+
 void loop() {
   int pressedId = Button::getPressedId();
   if (pressedId > -1) {
     int status = Restcall::sendButtonPressed(pressedId);
-    while (status == -1) {
+    while ((status == -1) && (wifiMulti.run() != WL_CONNECTED)) {
       wifiConnect();
       status = Restcall::sendButtonPressed(pressedId);
     }
-    if (status > 2) status = 2;
-    blink(status, 100, 10, true);
-    /*
-      digitalWrite(leds[0], HIGH);
-      delay(1000);
-      digitalWrite(leds[0], LOW);
-      digitalWrite(leds[1], HIGH);
-      delay(1000);
-      digitalWrite(leds[1], LOW);
-      digitalWrite(leds[2], HIGH);
-      delay(1000);
-      digitalWrite(leds[2], LOW);
-      */
-      Button::pullPressedId();
+    if (status > 2) {
+      status = 2;
+    } 
+    if (status >= 0) {
+      blink(status, 100, 10, true);
+    }
+  
+    Button::pullPressedId();
   }
   delay(100);
 }
