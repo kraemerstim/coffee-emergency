@@ -8,7 +8,7 @@
 
 int leds[3] = {D1, D2, D3};
 
-Button buttons[4] = {
+Button buttons[2] = {
     Button(0, D5, true),
     Button(1, D6, false)
   };
@@ -95,12 +95,12 @@ void blink(int led_id, int interval, int times, boolean disable_rest) {
   }
 }
 
-void raindbow() {
-  blink(leds[0], 0, 0, true);
+void rainbow() {
+  blink(0, 0, 0, true);
   delay(1000);
-  blink(leds[1], 0, 0, true);
+  blink(1, 0, 0, true);
   delay(1000);
-  blink(leds[2], 0, 0, true);
+  blink(2, 0, 0, true);
   delay(1000);
   disable_all_leds();
 }
@@ -118,6 +118,8 @@ void loop() {
     } 
     if (status >= 0) {
       blink(status, 100, 10, true);
+    } else {
+      rainbow();
     }
   
     Button::pullPressedId();
