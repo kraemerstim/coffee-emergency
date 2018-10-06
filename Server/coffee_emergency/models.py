@@ -18,6 +18,7 @@ class Device(BaseModel):
     internal_id = CharField()
     external_name = CharField(default='name me!')
     responsible_hipchat_user = CharField(default='insert hipchat username!')
+    responsible_slack_user_id = CharField(default='insert slack userID!')
     
     @staticmethod
     def button_pressed_on_device(device_id, button_id):

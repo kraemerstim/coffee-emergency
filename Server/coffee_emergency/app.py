@@ -2,8 +2,11 @@ from flask import Flask
 from flask_restful import Resource, Api
 from emergency_endpoint import ButtonPressedResource, DeviceStatusResource, ButtonTypeResource
 from emergency_manager import EmergencyManager
+import config_reader
 
 EmergencyManager.initialize()
+config_reader.initialize()
+
 app = Flask(__name__)
 api = Api(app)
 api.add_resource(DeviceStatusResource, '/emergency/rest/device/<device_id>/status')

@@ -1,3 +1,4 @@
 peewee
 pytest
 flask-restful
+requests

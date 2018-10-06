@@ -1,3 +1,4 @@
+import rest_action
 from models import Device, Button, Database
 
 class EmergencyManager:
@@ -12,6 +13,10 @@ class EmergencyManager:
     @staticmethod
     def button_pressed(device_id, button_id):
         Device.button_pressed_on_device(device_id, button_id)
+        device = Device.get_device_by_id(device_id)
+        button = Button.get_button_by_id(device_id, button_id)
+        rest_action.CallHipchatRestApi(device, button)
+        rest_action.CallSlackRestApi(device, button)
         return Device.get_device_by_id(device_id).status
 
     @staticmethod
