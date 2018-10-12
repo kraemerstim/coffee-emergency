@@ -8,7 +8,7 @@ from models import Device, Button
 
 def CallHipchatRestApi (device, button):
   if button.is_reset_button:
-    message = 'Hey, ' + device.responsible_hipchat_user + '! Die Kaffeemaschine ' + device.external_name + ' ist wieder Einsatzbereit'
+    message = 'Hey, ' + device.responsible_hipchat_user + '! Die Kaffeemaschine ' + device.external_name + ' ist wieder einsatzbereit'
     color = 'green'
   elif device.status <= 1:
     message = 'Hey, ' + device.responsible_hipchat_user + '! Die Kaffeemaschine ' + device.external_name + ' hat ein Problem'
@@ -31,7 +31,7 @@ def CallHipchatRestApi (device, button):
 
 def CallSlackRestApi (device, button):
   if button.is_reset_button:
-    message = 'Hey, <@' + device.responsible_slack_user_id + '>! Die Kaffeemaschine ' + device.external_name + ' ist wieder Einsatzbereit'
+    message = 'Hey, <@' + device.responsible_slack_user_id + '>! Die Kaffeemaschine ' + device.external_name + ' ist wieder einsatzbereit'
   elif device.status <= 1:
     message = 'Hey, <@' + device.responsible_slack_user_id + '>! Die Kaffeemaschine ' + device.external_name + ' hat ein Problem'
   else:
